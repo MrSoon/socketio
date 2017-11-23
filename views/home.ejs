@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>SocketIO</title>
+    <script src="js/jquery.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="js/main.js"></script>
+    <link rel="stylesheet" href="css/style.css" media="all" type="text/css">
+</head>
+
+<body onload="startTime()">
+    <div class="content">
+    <div class="socketio">
+        <form class="formsignin">
+            <input type="text" name="username" value="" placeholder="Username">
+            <button>SigIn</button>
+        </form>
+        <div class="content_in">
+            <div id="header">
+                <div class="header_01">
+                    <img src="images/live.png" alt="">
+                    <p>Live Chat</p>
+                </div>
+                <div class="header_02">
+                    <h1>Xin Chào : <span class="hiuser"></span><span id="datetime">[ 11:30 AM ]</span></h1>
+                    <button id="logout">Logout</button>
+                </div>
+                <div class="header_03"><div class="img"><img src="images/ava.jpg" alt=""></div></div>
+            </div>
+            <div id="bodychat">
+                <div class="leftbody">
+                    <div class="leftbody_01">
+                        <h2>Online <span class="num_user_ol"></span></h2>
+                        <ul class="useronline"></ul>
+                    </div>
+                    <div class="leftbody_01">
+                        <h2>Nhóm Tham Gia</h2>
+                        <ul id="stayroom"></ul>
+                    </div>
+                    <div class="leftbody_01">
+                        <h2>Tất Cả Nhóm<span class="allroom"></span></h2>
+                        <ul class="roomhave"></u>
+                    </div>
+                    <div class="addroom">
+                        <h2>Tạo Nhóm Mới</h2>
+                        <input type="text" id="txtRoom" placeholder="Tên Nhóm">
+                        <input type="button" id="btntaoroom" value="Tạo">
+                    </div>
+                    <div id="showhideleft"><img src="images/left.png" alt=""></div>
+                </div>
+                <div class="cterbody">
+                    <div class="private_user_chat">
+                        <div class="img_prvc"><img src="images/ava.jpg" alt=""></div>
+                        <p class="prv_username">Username</p>
+                    </div>
+                    <div class="showmessage"></div>
+                    <div class="loadingtext"><span></span> đang viết gì đó...</div>
+                    <div id="message_enter">
+                        <form class="formchat">
+                                <input id="idRoom" type="hidden" name="idRoom" value="">
+                                <input type="text" name="message" value="" placeholder="Type your message...." id="txt_mess">
+                                <button id="btsend">Gửi</button>
+                        </form>
+                    </div>
+                </div>
+                <div class="rightbody">
+                    <div class="imgprf">
+                        <img src="images/ava.jpg" alt="">
+                        <h2 class="hiuser"></h2>
+                    </div>
+                    <div class="info">
+                        <p class="birth">1988</p>
+                        <p class="provite">HCM</p>
+                        <h3 class="stt">Status here</h3>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+
+
+
+        <div class="signintrue">
+            
+
+            
+            <div class="messchatroom"></div>
+            <input type="text" id="txtchatroom">
+            <button id="idchatroom">Chat room</button>
+
+
+
+        </div>
+
+
+
+
+
+
+    </div></div>
+</body>
+
+</html>
