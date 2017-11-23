@@ -152,6 +152,7 @@ area{
 }
 .leftbody li span{
     line-height: 30px;
+    cursor: pointer;
 }
 .leftbody li img{
     float:left;

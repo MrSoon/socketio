@@ -26,12 +26,15 @@ $(document).ready(function(){
     socket.on('server-send-list-user', users => {
         const ulAppend = $('.useronline');
         $('.num_user_ol').html(' ');
-        const num_user_ol = users.length;
+        const num_user_ol = users.length - 1;
         $('.num_user_ol').append(num_user_ol);
         ulAppend.html('');
         users.forEach(user => {
             const {username, socketId} = user;
-            ulAppend.append(`<li><img src="images/ava.jpg" alt=""><span id="${socketId}">${username}</span></li>`);
+            if(socket.id !== socketId){
+                ulAppend.append(`<li><img src="images/ava.jpg" alt=""><span id="${socketId}">${username}</span></li>`);
+            }
+            
         });
         
     });
@@ -114,7 +117,10 @@ $(document).ready(function(){
     //chat private user
 
     $( document ).on( "click", ".useronline span", function() {
+        const showmessage = $('.showmessage');
         const idroom = $(this).attr('id');
+        showmessage.attr('id', idroom);
+        $('.showmessage#'+idroom).show();
         const name_us = $(this).html();
         const divUser = $('.prv_username').html('');
         const idRoom = $('#idRoom').html('');
