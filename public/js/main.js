@@ -25,14 +25,17 @@ $(document).ready(function(){
 
     socket.on('server-send-list-user', users => {
         const ulAppend = $('.useronline');
+        const ctenshowMess = $('.showmessage');
         $('.num_user_ol').html(' ');
         const num_user_ol = users.length - 1;
         $('.num_user_ol').append(num_user_ol);
         ulAppend.html('');
+        ctenshowMess.html('');
         users.forEach(user => {
             const {username, socketId} = user;
             if(socket.id !== socketId){
-                ulAppend.append(`<li><img src="images/ava.jpg" alt=""><span id="${socketId}">${username}</span></li>`);
+                ulAppend.append(`<li><img src="images/ava.jpg" alt=""><span id="${socketId}_li">${username}</span></li>`);
+                ctenshowMess.append(`<div id="${socket.id}-${socketId}"></div>`);
             }
             
         });
@@ -55,21 +58,20 @@ $(document).ready(function(){
     });
     socket.on('server-send-message-private', dataMess => {
         const { username , message, id } = dataMess;
-        console.log(username);
-        console.log(message);
-        console.log(id);
-        console.log(socket.id);
-
-        if(socket.id === id){
-            $('.showmessage').append(`<p class='ad'>${message} : ${username}</p>`);
-        }else{
-            $('.showmessage').append(`<p class="guest">${username} : ${message}</p>`);
-        }
-        //private auto chat
-        if(id !== socket.id){
-            $('.prv_username').html(username);
-            $('#idRoom').val(id);
-        }
+        console.log('socket.id : ' + socket.id );
+        console.log('id : ' + id);
+        //console.log(id);
+        
+        // if(socket.id === id){
+        //     $(`#${socket.id}-${id}`).append(`<p class='ad'>${message} : ${username}</p>`);
+        // }else{
+        //     $(`#${socket.id}-${id}`).append(`<p class="guest">${username} : ${message}</p>`);
+        // }
+        // //private auto chat
+        // if(id !== socket.id){
+        //     $('.prv_username').html(username);
+        //     $('#idRoom').val(id);
+        // }
         
     });
 
@@ -117,15 +119,12 @@ $(document).ready(function(){
     //chat private user
 
     $( document ).on( "click", ".useronline span", function() {
-        const showmessage = $('.showmessage');
         const idroom = $(this).attr('id');
-        showmessage.attr('id', idroom);
-        $('.showmessage#'+idroom).show();
         const name_us = $(this).html();
         const divUser = $('.prv_username').html('');
         const idRoom = $('#idRoom').html('');
         divUser.append(name_us);
-        idRoom.val(idroom);
+        idRoom.val(idroom.replace("_li",""));
 
     });
     
