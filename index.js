@@ -19,6 +19,7 @@ app.get('/demo',(req, res) => {
 const users = [];
 
 io.on('connection', socket => {
+    
     socket.on('client-send-username', username => {
         username_check = users.map(function(e) { return e.username; }).indexOf(username);
         if(username_check === 0){
@@ -44,13 +45,24 @@ io.on('connection', socket => {
         socket.broadcast.emit('server-send-ngung-go');
     });
 
-    socket.on('client-send-message-private', data => {
-        const dataMess = {username : socket.username, message : data.message, id : socket.id};
-        //io.emit('server-send-message-toall', dataMess);
-        socket.join(data.idroom);
-        socket.phong = data.idroom;
+    socket.on('change-room-user', data => {
+        console.log(data.idrooms);
+        console.log(data.inroom);
+
+        if(socket.phong) socket.leave(socket.phong);
+        socket.join(data.idrooms);
+        socket.phong = data.idrooms;
+
         console.log('========');
         console.log(socket.adapter.rooms);
+    });
+
+    socket.on('client-send-message-private', data => {
+        
+        
+        console.log('========');
+        console.log(socket.adapter.rooms);
+        const dataMess = {username : socket.username, message : data.message, socketPhong : socket.phong};
         io.sockets.in(socket.phong).emit('server-send-message-private', dataMess);
     });
 
