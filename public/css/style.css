@@ -327,16 +327,25 @@ h1 span{
     font-weight: bold;
     padding:15px 0px 0px 10px;
 }
+.showmessage{
+    overflow:hidden;
+    padding:10px 0px;
+}
 .showmessage p{
     padding:5px;
-    margin-bottom:10px;
     color: #595757;
+    width:90%;
+    margin-bottom:10px;
 }
 .showmessage .ad{
     background-color:#BAE3F9;
     border-radius:5px;
+    margin-right:5px;
+    float: right;
 }
 .showmessage .guest{
+    float:left;
+    margin-left:5px;
     background-color:#fff;
     border-radius:5px;
 }
