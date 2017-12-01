@@ -1,16 +1,18 @@
 const socket = io('http://localhost:3000');
 
 $(document).ready(function(){
-    //Array save message of all user
-    const ArrayMessage = [];
 
+    const arrSaveMess = [{
+        username:'',
+        content: ''
+    }];
     $('.signintrue').hide();
     $('.loadingtext').hide();
 
     $('#logout').click(function(){
         socket.emit('client-logout')
-        $('.formsignin').show(500);
-        $('.signintrue').hide(500);
+        $('.formsignin').show();
+        $('.signintrue').hide();
     });
     $('.formsignin').submit( (e) => {
         e.preventDefault();
@@ -39,7 +41,7 @@ $(document).ready(function(){
         users.forEach(user => {
             const {username, socketId} = user;
             if(socket.id !== socketId){
-                ulAppend.append(`<li title="${socketId}"><img src="images/ava.jpg" alt=""><span id="${socketId}_li">${username}</span></li>`);
+                ulAppend.append(`<li title="${socketId}" data-user="${username}"><img src="images/ava.jpg" alt=""><span id="${socketId}_li">${username}</span></li>`);
             }
         });
     });
@@ -51,7 +53,9 @@ $(document).ready(function(){
         const idRoom = $('#idRoom').val('');
         divUser.append(name_us);
         idRoom.val(idroom.replace("_li",""));
-     
+        //remove alert mess
+        $(this).parent().removeClass('usercoom_msg');
+        //show history message
     });
     //chat form
     $('.formchat').submit( e => {
@@ -60,18 +64,39 @@ $(document).ready(function(){
         const idroom = $('#idRoom').val();
         socket.emit('client-send-message-private', {idroom, message});
         $('input[name="message"]').val('');
+       
+      
+        
+        
     });
 
     socket.on('server-send-message-private', dataMess => {
         const { username , message, relayto } = dataMess;
-        $('.showmessage').append(`<p class="guest">${username} : ${message}</p>`);
+        const checkUser = $('.prv_username').html();
+        if(!checkUser){
+            $('.prv_username').html(username);
+            $('.showmessage').append(`<p class="guest">${username} : ${message}</p>`);
+        }else{
+            $('.useronline li').each( function() {
+                const usercoom = $(this).attr('data-user');
+                if(usercoom === username) $(this).addClass('usercoom_msg');
+            });
+           
+        } 
         const idroom = $('#idRoom').val(relayto);
-        $('.prv_username').html(username);
-        //save username to ArrayMessage
         const ctent_mess = $('.showmessage').html();
-        ArrayMessage.push({username: username, message: ctent_mess});
-        console.log(ArrayMessage);
-
+        //const array save message
+        for(let i = 0; i <= arrSaveMess.length; i++){
+            if(arrSaveMess[i].username === username){
+                arrSaveMess[i].content = ctent_mess;
+            }else{
+                arrSaveMess.push({username: username, content: ctent_mess});
+            }
+        }
+  
+        console.log(arrSaveMess);
+       
+        
     });
     socket.on('rel-user', dataMess => {
         const { username , message } = dataMess;
