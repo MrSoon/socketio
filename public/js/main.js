@@ -2,10 +2,7 @@ const socket = io('http://localhost:3000');
 
 $(document).ready(function(){
 
-    const arrSaveMess = [{
-        username:'',
-        content: ''
-    }];
+    const arrSaveMess = [{ username:"", ctent:""}];
     $('.signintrue').hide();
     $('.loadingtext').hide();
 
@@ -41,6 +38,9 @@ $(document).ready(function(){
         users.forEach(user => {
             const {username, socketId} = user;
             if(socket.id !== socketId){
+                const checkCl = $(`.showmessage ${username}`).length;
+                console.log(checkCl);
+                if(checkCl === 0) $('.showmessage').append(`<div class="${username}"></div>`);
                 ulAppend.append(`<li title="${socketId}" data-user="${username}"><img src="images/ava.jpg" alt=""><span id="${socketId}_li">${username}</span></li>`);
             }
         });
@@ -73,30 +73,35 @@ $(document).ready(function(){
     socket.on('server-send-message-private', dataMess => {
         const { username , message, relayto } = dataMess;
         const checkUser = $('.prv_username').html();
-        if(!checkUser){
-            $('.prv_username').html(username);
-            $('.showmessage').append(`<p class="guest">${username} : ${message}</p>`);
-        }else{
+        if(checkUser){
             $('.useronline li').each( function() {
                 const usercoom = $(this).attr('data-user');
-                if(usercoom === username) $(this).addClass('usercoom_msg');
+                if(usercoom === username && usercoom !== checkUser) $(this).addClass('usercoom_msg');
             });
-           
+            arrSaveMess.push({ username: username, ctent: `<p class="guest">${username} : ${message}</p>`});
+        }else{
+            $('.prv_username').html(username);
+            $('.showmessage').append(`<p class="guest">${username} : ${message}</p>`);
         } 
+        
         const idroom = $('#idRoom').val(relayto);
         const ctent_mess = $('.showmessage').html();
-        //const array save message
-        for(let i = 0; i <= arrSaveMess.length; i++){
-            if(arrSaveMess[i].username === username){
-                arrSaveMess[i].content = ctent_mess;
+        const arrLenght = arrSaveMess.length;
+        if(arrLenght < 2){
+            arrSaveMess.push({ username: username, ctent: ctent_mess});
+        }else{
+            const checkFinduser = arrSaveMess.find(isUser);
+            if(typeof checkFinduser !== 'undefined'){
+                arrSaveMess.find(isUser).ctent = ctent_mess;
             }else{
-                arrSaveMess.push({username: username, content: ctent_mess});
+                arrSaveMess.push({ username: username, ctent: ctent_mess});
             }
         }
-  
-        console.log(arrSaveMess);
-       
-        
+       console.log(arrSaveMess);
+        //return username in array
+        function isUser(user) { 
+            return user.username === username;
+        }       
     });
     socket.on('rel-user', dataMess => {
         const { username , message } = dataMess;
@@ -125,130 +130,6 @@ $(document).ready(function(){
 
 
 });
-
-// $(document).ready(function(){
-    
-//     $('.signintrue').hide();
-//     $('.formsignin').submit( (e) => {
-//         e.preventDefault();
-//         const username = $('input[name="username"]').val();
-//         socket.emit('client-send-username', username);
-//         $('input[name="username"]').val('');
-//     });
-
-//     socket.on('server-send-dk-thatbai', () => {
-//         alert('Ten dang ky da ton tai !');
-//     });
-//     socket.on('server-send-username-notnull', () => {
-//         alert('Ten khong duoc trong !');
-//     });
-//     socket.on('server-send-dk-thanhcong', username => {
-//         $('.formsignin').hide(2000);
-//         $('.signintrue').show(1000);
-//         $('.hiuser').text(username);
-//     });
-
-//     socket.on('server-send-list-user', users => {
-//         const ulAppend = $('.useronline');
-//         $('.num_user_ol').html(' ');
-//         const num_user_ol = users.length - 1;
-//         $('.num_user_ol').append(num_user_ol);
-//         ulAppend.html('');
-//         users.forEach(user => {
-//             const {username, socketId} = user;
-//             if(socket.id !== socketId){
-//                 ulAppend.append(`<li title="${socketId}"><img src="images/ava.jpg" alt=""><span id="${socketId}_li">${username}</span></li>`);
-//             }
-            
-//         });
-        
-//     });
-
-//     $('#logout').click(function(){
-//         socket.emit('client-logout')
-//         $('.formsignin').show(500);
-//         $('.signintrue').hide(500);
-//     });
-
-//     //chat form
-//     $('.formchat').submit( e => {
-//         e.preventDefault();
-//         const message = $('input[name="message"]').val();
-//         const idroom = $('#idRoom').val();
-//         const inroom = $('#inroom').val();
-//         socket.emit('client-send-message-private', {idroom, message});
-//         $('input[name="message"]').val('');
-//     });
-//     socket.on('server-send-message-private', dataMess => {
-//         const { username , message, socketPhong } = dataMess;
-//         $('.showmessage').append(`<p class="guest">${username} : ${message}</p>`);
-        
-//     });
-//     socket.on('rel-user', dataMess => {
-//         const { username , message, socketPhong } = dataMess;
-
-//        $('.showmessage').append(`<p class='ad'>${message} : ${username}</p>`);
-        
-//     });
-
-//     $('#textmess').focusin( () => {
-//         socket.emit('toi-dang-go');
-//     });
-//     $('.loadingtext').hide();
-//     socket.on('server-send-co-nguoi-dang-go', username => {
-//         $('.loadingtext').show();
-//         $('.loadingtext span').html(`${username}`)
-//     });
-//     $('#txt_mess').focusin( () => {
-//         socket.emit('toi-dang-go');
-//     });
-//     $('#txt_mess').focusout( () => {
-//         socket.emit('toi-ngung-go');
-//     });
-//     socket.on('server-send-ngung-go', () => {
-//         $('.loadingtext').hide();
-//     });
-//     //tao room
-//     $('#btntaoroom').click(function(){
-//         socket.emit('tao-room', $('#txtRoom').val());
-//         $('#txtRoom').val('');
-//     });
-//     socket.on('server-send-list-room', arrRoom => {
-//         const roomhave = $('.roomhave').html('');
-//         $('.allroom').html('');
-//         $('.allroom').append(arrRoom.length);
-//         arrRoom.map( i => {
-//             roomhave.append(`<li class="room">${i.slice(5)}</li>`)
-//         });
-//     });
-//     socket.on('server-send-room-socket', room =>{
-//         $('#stayroom').html('');
-//         $('#stayroom').text(`${room}`)
-//     });
-//     $('#idchatroom').click(() => {
-//         socket.emit('user-chat-room', $('#txtchatroom').val());
-//     });
-//     socket.on('server-send-mess-chatroom', data => {
-//         $('.messchatroom').append(`<p>${data}</p>`)
-//     });
-
-//     //chat private user
-    
-//     $( document ).on( "click", ".useronline span", function() {
-//         const idroom = $(this).attr('id');
-//         const name_us = $(this).html();
-//         const divUser = $('.prv_username').html('');
-//         const idRoom = $('#idRoom').val('');
-//         divUser.append(name_us);
-//         idRoom.val(idroom.replace("_li",""));
-//         $('#inroom').val(socket.id);
-//         const inroom = $('#inroom').val();
-//         const idrooms = $('#idRoom').val();
-//         const data = {idrooms,inroom}
-//         //socket.emit('change-room-user', data);
-//     });
-    
-// });
 
 function startTime() {
     var today = new Date();
